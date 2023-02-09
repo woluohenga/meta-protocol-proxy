@@ -5,6 +5,7 @@
 #include "envoy/network/connection.h"
 #include "envoy/network/filter.h"
 #include "envoy/stats/timespan.h"
+#include "envoy/upstream/cluster_manager.h"
 
 #include "source/common/common/logger.h"
 
@@ -20,6 +21,7 @@
 #include "src/meta_protocol_proxy/stream.h"
 #include "src/meta_protocol_proxy/tracing/tracer.h"
 #include "src/meta_protocol_proxy/request_id/config.h"
+#include "src/meta_protocol_proxy/upstream_handler.h"
 
 namespace Envoy {
 namespace Extensions {
@@ -57,9 +59,9 @@ class ConnectionManager : public Network::ReadFilter,
                           Logger::Loggable<Logger::Id::filter> {
 public:
   ConnectionManager(Config& config, Random::RandomGenerator& random_generator,
-                    TimeSource& time_system);
+                    TimeSource& time_system, Upstream::ClusterManager& cluster_manager);
   ~ConnectionManager() override {
-    ENVOY_LOG(trace, "********** ConnectionManager destructed ***********");
+    ENVOY_LOG(info, "********** ConnectionManager destructed ***********");
   };
 
   // Network::ReadFilter
@@ -95,6 +97,11 @@ public:
   Tracing::TracingConfig* tracingConfig() { return config_.tracingConfig(); };
   RequestIDExtensionSharedPtr requestIDExtension() { return config_.requestIDExtension(); };
 
+  void sendByUpstreamHandler(const std::string& cluster_name,
+                             Upstream::LoadBalancerContext& context,
+                             MetadataSharedPtr request_metadata,
+                             MutationSharedPtr request_mutation);
+
   // This function is for testing only.
   std::list<ActiveMessagePtr>& getActiveMessagesForTest() { return active_message_list_; }
 
@@ -108,6 +115,8 @@ private:
   void resetIdleTimer();
   // Disable the timer
   void disableIdleTimer();
+  // resrt upstream handler mng
+  void resetUpstreamHandlerManager();
 
   Buffer::OwnedImpl request_buffer_;
   std::list<ActiveMessagePtr> active_message_list_;
@@ -123,6 +132,9 @@ private:
   Network::ReadFilterCallbacks* read_callbacks_{};
   // timer for idle timeout
   Event::TimerPtr idle_timer_;
+  // upstream mng
+  UpstreamHandlerManager upstream_handler_manager_;
+  Upstream::ClusterManager& cluster_manager_;
 };
 
 } // namespace MetaProtocolProxy

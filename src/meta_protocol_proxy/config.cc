@@ -54,7 +54,7 @@ Network::FilterFactoryCb MetaProtocolProxyFilterConfigFactory::createFilterFacto
   return [singletons, filter_config, &context](Network::FilterManager& filter_manager) -> void {
     filter_manager.addReadFilter(
         std::make_shared<ConnectionManager>(*filter_config, context.api().randomGenerator(),
-                                            context.mainThreadDispatcher().timeSource()));
+                                            context.mainThreadDispatcher().timeSource(), context.clusterManager()));
   };
 }
 

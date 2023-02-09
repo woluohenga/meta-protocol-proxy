@@ -61,7 +61,7 @@ using DirectResponsePtr = std::unique_ptr<DirectResponse>;
 class CodecFactory {
 public:
   virtual ~CodecFactory() = default;
-  
+
   /**
    * Create a codec, which will be used by the router to encode request and response
    * @return CodecPtr
@@ -177,6 +177,19 @@ public:
    * @return
    */
   virtual RequestIDExtensionSharedPtr requestIDExtension() PURE;
+
+  /**
+   * @brief Send data by update handler
+   * 
+   * @param cluster_name 
+   * @param context 
+   * @param request_metadata 
+   * @param request_mutation 
+   */
+  virtual void sendByUpstreamHandler(const std::string& cluster_name,
+                                     Upstream::LoadBalancerContext& context,
+                                     MetadataSharedPtr request_metadata,
+                                     MutationSharedPtr request_mutation) PURE;
 };
 
 /**

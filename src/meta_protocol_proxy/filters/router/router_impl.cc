@@ -49,6 +49,11 @@ FilterStatus Router::onMessageDecoded(MetadataSharedPtr request_metadata,
   route_entry_ = route_->routeEntry();
   const std::string& cluster_name = route_entry_->clusterName();
 
+  // 实现一下连接复用模式
+  decoder_filter_callbacks_->sendByUpstreamHandler(cluster_name, *this, request_metadata,
+                                                   request_mutation);
+  return FilterStatus::AbortIteration;
+
   auto prepare_result = prepareUpstreamRequest(cluster_name, request_metadata_, this);
   if (prepare_result.exception.has_value()) {
     decoder_filter_callbacks_->sendLocalReply(prepare_result.exception.value(), false);

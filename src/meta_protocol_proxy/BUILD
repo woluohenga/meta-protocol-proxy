@@ -56,6 +56,7 @@ envoy_cc_library(
         ":decoder_lib",
         ":heartbeat_response_lib",
         ":stats_lib",
+        ":upstream_handler_lib",
         "//api/meta_protocol_proxy/v1alpha:pkg_cc_proto",
         "//src/meta_protocol_proxy/route:rds_interface",
         "//src/meta_protocol_proxy/route:route_interface",
@@ -66,6 +67,7 @@ envoy_cc_library(
         "@envoy//envoy/network:filter_interface",
         "@envoy//envoy/stats:stats_interface",
         "@envoy//envoy/stats:timespan_interface",
+        "@envoy//envoy/upstream:cluster_manager_interface",
         "@envoy//source/common/buffer:buffer_lib",
         "@envoy//source/common/buffer:watermark_buffer_lib",
         "@envoy//source/common/common:assert_lib",
@@ -143,6 +145,19 @@ envoy_cc_library(
         ":codec_impl_lib",
         "//src/meta_protocol_proxy/filters:filter_interface",
         "//src/meta_protocol_proxy/codec:codec_interface",
+    ],
+)
+
+envoy_cc_library(
+    name = "upstream_handler_lib",
+    repository = "@envoy",
+    srcs = ["upstream_handler.cc"],
+    hdrs = ["upstream_handler.h"],
+    deps = [
+        "@envoy//source/common/buffer:buffer_lib",
+        "@envoy//envoy/upstream:thread_local_cluster_interface",
+        "@envoy//envoy/upstream:load_balancer_interface",
+        "@envoy//envoy/tcp:conn_pool_interface",
     ],
 )
 

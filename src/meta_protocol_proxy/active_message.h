@@ -108,6 +108,10 @@ public:
   Tracing::MetaProtocolTracerSharedPtr tracer() override;
   Tracing::TracingConfig* tracingConfig() override;
   RequestIDExtensionSharedPtr requestIDExtension() override;
+  void sendByUpstreamHandler(const std::string& cluster_name,
+                             Upstream::LoadBalancerContext& context,
+                             MetadataSharedPtr request_metadata,
+                             MutationSharedPtr request_mutation) override;
 
   DecoderFilterSharedPtr handler() { return handle_; }
 
@@ -188,6 +192,10 @@ public:
   Tracing::MetaProtocolTracerSharedPtr tracer() override;
   Tracing::TracingConfig* tracingConfig() override;
   RequestIDExtensionSharedPtr requestIDExtension() override;
+  void sendByUpstreamHandler(const std::string& cluster_name,
+                             Upstream::LoadBalancerContext& context,
+                             MetadataSharedPtr request_metadata,
+                             MutationSharedPtr request_mutation) override;
 
   void createFilterChain();
   FilterStatus applyDecoderFilters(ActiveMessageDecoderFilter* filter,

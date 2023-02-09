@@ -196,6 +196,14 @@ RequestIDExtensionSharedPtr ActiveMessageDecoderFilter::requestIDExtension() {
   return activeMessage_.requestIDExtension();
 }
 
+void ActiveMessageDecoderFilter::sendByUpstreamHandler(const std::string& cluster_name,
+                                                       Upstream::LoadBalancerContext& context,
+                                                       MetadataSharedPtr request_metadata,
+                                                       MutationSharedPtr request_mutation) {
+  return activeMessage_.sendByUpstreamHandler(cluster_name, context, request_metadata,
+                                              request_mutation);
+}
+
 // class ActiveMessageEncoderFilter
 ActiveMessageEncoderFilter::ActiveMessageEncoderFilter(ActiveMessage& parent,
                                                        EncoderFilterSharedPtr filter,
@@ -393,6 +401,14 @@ Tracing::TracingConfig* ActiveMessage::tracingConfig() {
 
 RequestIDExtensionSharedPtr ActiveMessage::requestIDExtension() {
   return connection_manager_.requestIDExtension();
+}
+
+void ActiveMessage::sendByUpstreamHandler(const std::string& cluster_name,
+                                          Upstream::LoadBalancerContext& context,
+                                          MetadataSharedPtr request_metadata,
+                                          MutationSharedPtr request_mutation) {
+  return connection_manager_.sendByUpstreamHandler(cluster_name, context, request_metadata,
+                                                   request_mutation);
 }
 
 void ActiveMessage::maybeDeferredDeleteMessage() {
